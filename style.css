@@ -1,0 +1,43 @@
+body {
+  font-family: 'Noto Sans Gujarati', sans-serif;
+  background-color: #f0f8ff;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+header {
+  background-color: #6a1b9a;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+.logo {
+  width: 120px;
+  margin-bottom: 10px;
+}
+nav a {
+  color: white;
+  margin: 0 10px;
+  text-decoration: none;
+}
+section {
+  padding: 20px;
+}
+.gallery {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.gallery img {
+  width: 45%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+footer {
+  background-color: #6a1b9a;
+  color: white;
+  text-align: center;
+  padding: 10px;
+}
