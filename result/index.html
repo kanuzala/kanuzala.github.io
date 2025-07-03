@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+  <meta charset="UTF-8">
+  <title>મારું પરિણામ</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>વિદ્યાર્થી પરિણામ ફોર્મ</h1>
+    <form id="resultForm">
+      <label>વિદ્યાર્થીનું નામ:</label>
+      <input type="text" id="name" required>
+
+      <label>ગુજરાતી:</label>
+      <input type="number" id="gujarati" required>
+
+      <label>હિન્દી:</label>
+      <input type="number" id="hindi" required>
+
+      <label>અંગ્રેજી:</label>
+      <input type="number" id="english" required>
+
+      <label>ગણિત:</label>
+      <input type="number" id="math" required>
+
+      <label>પર્યાવરણ:</label>
+      <input type="number" id="evs" required>
+
+      <button type="submit">પરિણામ જુઓ</button>
+    </form>
+
+    <div id="output" class="result">
+      <!-- પરિણામ અહીં બતાશે -->
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
