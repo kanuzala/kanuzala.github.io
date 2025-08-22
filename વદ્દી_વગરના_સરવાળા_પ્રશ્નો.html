@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+  <meta charset="UTF-8">
+  <title>વદ્દી વાળા સરવાળા પ્રશ્નો</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    body { font-family: 'Noto Sans Gujarati', sans-serif; padding: 20px; background: #f8f8f8; }
+    h1 { text-align: center; }
+    .header-row { margin-bottom: 20px; }
+    .header-row input { margin: 0 10px; padding: 5px; font-size: 14px; width: 250px; }
+    .controls { text-align: center; margin-bottom: 20px; }
+    .level-title { font-size: 20px; font-weight: bold; margin-top: 30px; text-align: center; }
+    .level-container { margin-bottom: 30px; text-align: center; }
+    .problems-wrapper { display: flex; justify-content: center; flex-wrap: wrap; gap: 8px; }
+    .problem { display: inline-block; width: 160px; height: 160px; margin: 10px; padding: 10px; border: 2px solid #000; background: #fff; vertical-align: top; position: relative; box-sizing: border-box; }
+    .serial { position: absolute; top: 5px; left: 5px; font-weight: bold; }
+    .number-table { border-collapse: collapse; text-align: right; margin-top: 20px; width: 100%; height: calc(100% - 30px); }
+    .number-table td { padding: 4px; font-size: 24px; width: 33%; text-align: center; }
+    .line-row td { border-top: 2px solid #000; height: 10px; }
+    .answer-row td { height: 30px; }
+  </style>
+</head>
+<body>
+  <h1>વદ્દી વાળા સરવાળા પ્રશ્નો</h1>
+
+  <div class="header-row" style="text-align:center;">
+    શાળાનું નામ: <input type="text" id="schoolName" >
+    વિધાર્થીનું નામ: <input type="text" id="studentName" >
+  </div>
+
+  <div class="controls">
+    એક અંકી: <input type="number" id="count1" value="5" min="1" max="100">
+    ૧૦ થી ૯૯: <input type="number" id="count2" value="5" min="1" max="100">
+    ૧૦૦ થી ૯૯૯: <input type="number" id="count3" value="5" min="1" max="100">
+    <button onclick="generateAll()">બધા પ્રશ્નો બનાવો</button>
+    <button onclick="downloadPDF()">PDF ડાઉનલોડ</button>
+  </div>
+
+  <div id="worksheet"></div>
+
+  <script>
+    const gujaratiDigits = ['૦','૧','૨','૩','૪','૫','૬','૭','૮','૯'];
+
+    function getRandomDigitsWithCarry(length) {
+      while (true) {
+        let d1 = [], d2 = [];
+        for (let i = 0; i < length; i++) {
+          let a = Math.floor(Math.random() * 10);
+          let b = Math.floor(Math.random() * 10);
+          if (i === 0) {
+            while (a === 0) a = Math.floor(Math.random() * 10);
+            while (b === 0) b = Math.floor(Math.random() * 10);
+          }
+          d1.push(a);
+          d2.push(b);
+        }
+        let hasCarry = false;
+        for (let i = 0; i < length; i++) {
+          if (d1[length - 1 - i] + d2[length - 1 - i] >= 10) {
+            hasCarry = true;
+            break;
+          }
+        }
+        if (hasCarry) return [d1, d2];
+      }
+    }
+
+    function toGujaratiNumber(num) { return num.map(d => gujaratiDigits[d]); }
+
+    function generateLevelProblems(count, digits, titleText) {
+      const worksheet = document.getElementById('worksheet');
+      const levelDiv = document.createElement('div');
+      levelDiv.className = 'level-container';
+
+      const title = document.createElement("div");
+      title.className = "level-title";
+      title.innerText = titleText;
+      levelDiv.appendChild(title);
+
+      const problemsWrapper = document.createElement('div');
+      problemsWrapper.className = 'problems-wrapper';
+
+      for (let i = 1; i <= count; i++) {
+        const [digits1, digits2] = getRandomDigitsWithCarry(digits);
+        const num1 = toGujaratiNumber(digits1);
+        const num2 = toGujaratiNumber(digits2);
+
+        const problemDiv = document.createElement("div");
+        problemDiv.className = "problem";
+
+        const serial = document.createElement("div");
+        serial.className = "serial";
+        serial.innerText = i;
+
+        const table = document.createElement("table");
+        table.className = "number-table";
+
+        const row1 = document.createElement("tr");
+        row1.innerHTML = `<td></td>${num1.map(n => `<td>${n}</td>`).join('')}`;
+
+        const row2 = document.createElement("tr");
+        row2.innerHTML = `<td>+</td>${num2.map(n => `<td>${n}</td>`).join('')}`;
+
+        const line = document.createElement("tr");
+        line.className = "line-row";
+        line.innerHTML = `<td></td>${'<td></td>'.repeat(digits)}`;
+
+        const answer = document.createElement("tr");
+        answer.className = "answer-row";
+        answer.innerHTML = `<td></td>${'<td></td>'.repeat(digits)}`;
+
+        table.appendChild(row1);
+        table.appendChild(row2);
+        table.appendChild(line);
+        table.appendChild(answer);
+
+        problemDiv.appendChild(serial);
+        problemDiv.appendChild(table);
+        problemsWrapper.appendChild(problemDiv);
+      }
+
+      levelDiv.appendChild(problemsWrapper);
+      worksheet.appendChild(levelDiv);
+    }
+
+    function generateAll() {
+      const c1 = parseInt(document.getElementById('count1').value);
+      const c2 = parseInt(document.getElementById('count2').value);
+      const c3 = parseInt(document.getElementById('count3').value);
+      const worksheet = document.getElementById('worksheet');
+      worksheet.innerHTML = "";
+      if (c1) generateLevelProblems(c1, 1, "એક અંકી સંખ્યાઓ (વદ્દી સાથે)");
+      if (c2) generateLevelProblems(c2, 2, "૧૦ થી ૯૯ (વદ્દી સાથે)");
+      if (c3) generateLevelProblems(c3, 3, "૧૦૦ થી ૯૯૯ (વદ્દી સાથે)");
+    }
+
+    async function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ unit: 'px', format: 'a4' });
+      const canvas = await html2canvas(document.getElementById('worksheet'), { scale: 2 });
+      const imgData = canvas.toDataURL('image/png');
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const imgProps = doc.getImageProperties(imgData);
+      const imgHeight = (imgProps.height * pageWidth) / imgProps.width;
+      doc.addImage(imgData, 'PNG', 0, 0, pageWidth, imgHeight);
+      doc.save('વદ્દી-વાળા-સરવાળા.pdf');
+    }
+  </script>
+</body>
+</html>
